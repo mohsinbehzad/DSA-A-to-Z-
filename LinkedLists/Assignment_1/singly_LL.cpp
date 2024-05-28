@@ -6,8 +6,8 @@ struct stu
     int id;
     stu *next = NULL;
 };
-stu *first = NULL;
-stu *last = NULL;
+stu *head = NULL;
+stu *tail = NULL;
 
 void insert(int id)
 {
@@ -15,14 +15,14 @@ void insert(int id)
     curr = new stu;
     cout << "Enter id: ";
     cin >> curr->id;
-    if (first == NULL)
+    if (head == NULL)
     {
-        first = last = curr;
+        head = tail = curr;
     }
     else
     {
-        last->next = curr;
-        last = curr;
+        tail->next = curr;
+        tail = curr;
     }
 }
 
@@ -32,20 +32,20 @@ void insert_start()
     curr = new stu;
     cout << "Enter id: ";
     cin >> curr->id;
-    if (first == NULL)
+    if (head == NULL)
     {
-        first = curr = last;
+        head = curr = tail;
     }
     else
     {
-        curr->next = first;
-        first = curr;
+        curr->next = head;
+        head = curr;
     }
 }
 
 void display()
 {
-    stu *p = first;
+    stu *p = head;
     while (p != NULL)
     {
         cout << p->id << "->";
@@ -56,7 +56,7 @@ void display()
 
 void search(int key)
 {
-    stu *p = first;
+    stu *p = head;
     while (p != NULL && p->id != key)
     {
         p = p->next;
@@ -73,7 +73,7 @@ void search(int key)
 
 stu *searchR(int key)
 {
-    stu *p = first;
+    stu *p = head;
     while (p != NULL && p->id != key)
     {
         p = p->next;
@@ -93,10 +93,10 @@ void insert_after(int key)
         stu *curr = new stu;
         cout << "Enter id: ";
         cin >> p->id;
-        if (p == last)
+        if (p == tail)
         {
-            last->next = curr;
-            last = curr;
+            tail->next = curr;
+            tail = curr;
         }
         else
         {
@@ -108,33 +108,33 @@ void insert_after(int key)
 
 void del_first()
 {
-    stu *p = first;
-    if (first == NULL)
+    stu *p = head;
+    if (head == NULL)
     {
         cout << "Nothing found";
     }
     else
     {
-        // p = first;
-        first = first->next;
+        // p = head;
+        head = head->next;
         delete p;
     }
 }
 
 void del_last()
 {
-    stu *p = first;
-    if (last == NULL)
+    stu *p = head;
+    if (tail == NULL)
     {
         cout << "Nothing Found";
     }
     else
     {
-        if (first == last)
+        if (head == tail)
         {
-            p = first;
+            p = head;
             delete p;
-            first = last = NULL;
+            head = tail = NULL;
         }
         else
         {
@@ -143,7 +143,7 @@ void del_last()
                 p = p->next;
             }
             p->next = NULL;
-            last = p;
+            tail = p;
         }
     }
 }
@@ -155,9 +155,9 @@ void del_specific(int key)
 
 void reverse_display()
 {
-    stu *s = first;
-    stu *e = last;
-    while (e != first)
+    stu *s = head;
+    stu *e = tail;
+    while (e != head)
     {
         while (s->next != e)
         {
@@ -165,22 +165,22 @@ void reverse_display()
         }
         cout << e->id;
         e = s;
-        s = first;
+        s = head;
     }
     cout << e->id;
 }
 
 void reverse()
 {
-    if (first == NULL || first->next == NULL)
+    if (head == NULL || head->next == NULL)
     {
         return;
     }
-    stu *headTemp = first;
-    stu *temp = first;
+    stu *headTemp = head;
+    stu *temp = head;
     stu *prev = nullptr;
-    stu *tailTemp = last;
-    while (first != tailTemp)
+    stu *tailTemp = tail;
+    while (head != tailTemp)
     {
         while (temp != tailTemp)
         {
@@ -189,14 +189,14 @@ void reverse()
         }
         temp->next = prev;
         tailTemp = prev;
-        prev = first;
-        temp = first;
+        prev = head;
+        temp = head;
     }
-    first = last;
-    last = headTemp;
-    last->next = NULL;
+    head = tail;
+    tail = headTemp;
+    tail->next = NULL;
 
-    stu *p = first;
+    stu *p = head;
     while (p != NULL)
     {
         cout << p->id << "->";
@@ -204,10 +204,44 @@ void reverse()
     }
 }
 
+void remove_duplicates(stu* head)
+{
+    stu *p1 = head;
+    stu *p2 = NULL;
+    while (p1->next != tail)
+    {
+        p2 = p1;
+        while (p2->next != tail)
+        {
+            if (p2->next->id == p1->id)
+            {
+                p2->next = p2->next->next;
+            }
+            p2 = p2->next;
+        }
+        p1 = p1->next;
+    }
+    return;
+}
+
+bool detect_loop(stu *head) {
+    stu *fast = head;
+    stu *slow = head;
+    while (fast != nullptr || fast->next != nullptr){
+        fast = fast->next->next;
+        slow = slow->next;
+        if(fast == slow) {
+            return true;
+        }
+    }
+    return false;
+}
+
 int main()
 {
     bool shouldRun = true;
-    while (shouldRun) {
+    while (shouldRun)
+    {
         cout << endl;
         cout << "1. Insert" << endl;
         cout << "2. Display" << endl;
@@ -218,38 +252,34 @@ int main()
         int input;
         cin >> input;
 
-        switch (input) {
-            case 1:
-                int id;
-                cout << "Enter id: ";
-                cin >> id;
-                insert(id);
-                break;
+        switch (input)
+        {
+        case 1:
+            int id;
+            cout << "Enter id: ";
+            cin >> id;
+            insert(id);
+            break;
 
-            case 2:
-                display();
-                break;
+        case 2:
+            display();
+            break;
 
-            case 3:
-                reverse_display();
-                cout << "NULL" << endl;
-                break;
+        case 3:
+            reverse_display();
+            cout << "NULL" << endl;
+            break;
 
-            case 4:
-                reverse();
-                break;
+        case 4:
+            reverse();
+            break;
 
-            case 5:
-                shouldRun = false;
-                break;
+        case 5:
+            shouldRun = false;
+            break;
 
-            default:
-                break;
+        default:
+            break;
         }
     }
 }
-
-// 1.not found
-// 2.first one
-// 3.last one
-// 4.only one value
